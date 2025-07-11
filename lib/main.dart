@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-
-final counterProvider = StateProvider<int>((ref) => 0);
+import 'package:roadsurfer_app/stores/campsites_store.dart';
+import 'package:roadsurfer_app/widgets/campsites_list.dart';
 
 void main() {
   runApp(const ProviderScope(child: MyApp()));
@@ -28,21 +28,67 @@ class HomeScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final count = ref.watch(counterProvider);
+    final campsitesAsync = ref.watch(campsitesProvider);
+
     return Scaffold(
-      appBar: AppBar(title: const Text('Roadsurfer Mobile Challenge')),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            const Text('You have pushed the button this many times:'),
-            Text('$count', style: Theme.of(context).textTheme.headlineMedium),
-          ],
-        ),
+      appBar: AppBar(
+        title: const Text('Roadsurfer Mobile Challenge'),
+        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () => ref.read(counterProvider.notifier).state++,
-        child: const Icon(Icons.add),
+      body: Column(
+        children: [
+          // Campsites section
+          Container(
+            padding: const EdgeInsets.all(16.0),
+            child: Row(
+              children: [
+                Expanded(
+                  child: ElevatedButton.icon(
+                    onPressed: () => ref.read(campsitesProvider.notifier).loadCampsites(),
+                    icon: const Icon(Icons.cloud_download),
+                    label: const Text('Load Campsites'),
+                  ),
+                ),
+                const SizedBox(width: 8),
+                ElevatedButton.icon(
+                  onPressed: () => ref.read(campsitesProvider.notifier).clearCampsites(),
+                  icon: const Icon(Icons.clear),
+                  label: const Text('Clear'),
+                ),
+              ],
+            ),
+          ),
+          Expanded(
+            child: campsitesAsync.when(
+              data: (campsites) => CampsitesList(),
+              loading: () => const Center(child: CircularProgressIndicator()),
+              error: (error, stack) => Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const Icon(Icons.error, size: 64, color: Colors.red),
+                    const SizedBox(height: 16),
+                    Text(
+                      'Error loading campsites',
+                      style: Theme.of(context).textTheme.headlineSmall,
+                    ),
+                    const SizedBox(height: 8),
+                    Text(
+                      error.toString(),
+                      style: Theme.of(context).textTheme.bodyMedium,
+                      textAlign: TextAlign.center,
+                    ),
+                    const SizedBox(height: 16),
+                    ElevatedButton(
+                      onPressed: () => ref.read(campsitesProvider.notifier).loadCampsites(),
+                      child: const Text('Retry'),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }
