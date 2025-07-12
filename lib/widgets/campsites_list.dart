@@ -9,9 +9,10 @@ class CampsitesList extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final campsitesAsync = ref.watch(campsitesProvider);
+    final hasActiveFilters = ref.watch(campsiteFiltersProvider).hasActiveFilters;
 
     return campsitesAsync.when(
-      data: (campsites) => _buildCampsitesList(campsites),
+      data: (campsites) => _buildCampsitesList(campsites, hasActiveFilters),
       loading: () => const Center(child: CircularProgressIndicator()),
       error: (error, stack) => Center(
         child: Column(
@@ -40,12 +41,37 @@ class CampsitesList extends ConsumerWidget {
     );
   }
 
-  Widget _buildCampsitesList(List<Campsite> campsites) {
+  Widget _buildCampsitesList(List<Campsite> campsites, bool hasActiveFilters) {
     if (campsites.isEmpty) {
-      return const Center(
-        child: Text(
-          'No campsites loaded. Click the "Load Campsites" button to fetch data.',
-          textAlign: TextAlign.center,
+      return Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(
+              hasActiveFilters ? Icons.filter_list_off : Icons.park,
+              size: 64,
+              color: Colors.grey[400],
+            ),
+            const SizedBox(height: 16),
+            Text(
+              hasActiveFilters ? 'No campsites match your filters' : 'No campsites loaded',
+              style: TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+                color: Colors.grey[600],
+              ),
+            ),
+            const SizedBox(height: 8),
+            Text(
+              hasActiveFilters 
+                ? 'Try adjusting your filters or clear them to see all campsites'
+                : 'Click "Load Campsites" to fetch data from the API',
+              style: TextStyle(
+                color: Colors.grey[500],
+              ),
+              textAlign: TextAlign.center,
+            ),
+          ],
         ),
       );
     }
@@ -138,6 +164,7 @@ class CampsitesList extends ConsumerWidget {
             ),
             trailing: const Icon(Icons.arrow_forward_ios),
             onTap: () {
+              // TODO: Navigate to campsite details
               ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(content: Text('Selected: ${campsite.label}')),
               );

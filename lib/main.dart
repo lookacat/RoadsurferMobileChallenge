@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:roadsurfer_app/stores/campsites_store.dart';
 import 'package:roadsurfer_app/widgets/campsites_list.dart';
+import 'package:roadsurfer_app/widgets/campsite_filters.dart';
 
 void main() {
   runApp(const ProviderScope(child: MyApp()));
@@ -37,7 +38,6 @@ class HomeScreen extends ConsumerWidget {
       ),
       body: Column(
         children: [
-          // Campsites section
           Container(
             padding: const EdgeInsets.all(16.0),
             child: Row(
@@ -58,6 +58,47 @@ class HomeScreen extends ConsumerWidget {
               ],
             ),
           ),
+
+          // Filters section
+          const CampsiteFiltersWidget(),
+
+          // Results count
+          campsitesAsync.when(
+            data: (campsites) => Container(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+              child: Row(
+                children: [
+                  Text(
+                    '${campsites.length} campsite${campsites.length == 1 ? '' : 's'} found',
+                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  const Spacer(),
+                  if (ref.watch(campsiteFiltersProvider).hasActiveFilters)
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                      decoration: BoxDecoration(
+                        color: Colors.orange[100],
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: Text(
+                        'Filtered',
+                        style: TextStyle(
+                          color: Colors.orange[800],
+                          fontSize: 12,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                ],
+              ),
+            ),
+            loading: () => const SizedBox.shrink(),
+            error: (_, __) => const SizedBox.shrink(),
+          ),
+
+          // Campsites list
           Expanded(
             child: campsitesAsync.when(
               data: (campsites) => CampsitesList(),
