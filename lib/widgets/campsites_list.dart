@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:roadsurfer_app/models/campsite.dart';
 import 'package:roadsurfer_app/stores/campsites_store.dart';
+import 'package:roadsurfer_app/widgets/campsite_detail_view.dart';
 
 class CampsitesList extends ConsumerWidget {
   const CampsitesList({super.key});
@@ -164,9 +165,11 @@ class CampsitesList extends ConsumerWidget {
             ),
             trailing: const Icon(Icons.arrow_forward_ios),
             onTap: () {
-              // TODO: Navigate to campsite details
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(content: Text('Selected: ${campsite.label}')),
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => CampsiteDetailView(campsite: campsite),
+                ),
               );
             },
           ),
