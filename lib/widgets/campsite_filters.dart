@@ -74,7 +74,7 @@ class _CampsiteFiltersWidgetState extends ConsumerState<CampsiteFiltersWidget> {
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
               decoration: BoxDecoration(
-                color: Colors.blue,
+                color: Color(0xFF6BBBAE),
                 borderRadius: BorderRadius.circular(10),
               ),
               child: const Text(

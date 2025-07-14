@@ -14,7 +14,8 @@ class CampsiteDetailView extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: Text(campsite.label),
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
+        backgroundColor: Color(0xFF6BBBAE),
+        foregroundColor: Colors.white,
       ),
       body: SingleChildScrollView(
         child: Column(
@@ -222,14 +223,14 @@ class CampsiteDetailView extends StatelessWidget {
                             ScaffoldMessenger.of(context).showSnackBar(
                               SnackBar(
                                 content: Text('Booking feature coming soon!'),
-                                backgroundColor: Colors.green,
+                                backgroundColor: Color(0xFF6BBBAE),
                               ),
                             );
                           },
                           icon: const Icon(Icons.book_online),
                           label: const Text('Book Now'),
                           style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.green,
+                            backgroundColor: Color(0xFF6BBBAE),
                             foregroundColor: Colors.white,
                             padding: const EdgeInsets.symmetric(vertical: 16),
                           ),
